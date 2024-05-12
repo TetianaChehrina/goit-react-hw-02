@@ -5,13 +5,10 @@ import Feedback from "../Feedback/Feedback";
 import Notification from "../Notification/Notification";
 
 const getValues = () => {
-  // 1.зчитати локальне сховище за ключем feedback
-  // 2.перевірка чи не порожне значення в localStorage
-  return {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+  const savedValues = localStorage.getItem("feedbacks");
+  return savedValues !== null
+    ? JSON.parse(savedValues)
+    : { good: 0, neutral: 0, bad: 0 };
 };
 
 export default function App() {
@@ -20,6 +17,10 @@ export default function App() {
     console.log(feedbackType);
     setValues({ ...values, [feedbackType]: values[feedbackType] + 1 });
   };
+
+  useEffect(() => {
+    localStorage.setItem("feedbacks", JSON.stringify(values));
+  }, [values]);
 
   const totalFeedback = values.good + values.bad + values.neutral;
   const positiveFeedback = Math.round((values.good / totalFeedback) * 100) || 0;
